@@ -1,4 +1,11 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    String username = (String) session.getAttribute("username");
+    if (username == null || username.isEmpty()) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +17,12 @@
 <div class="page-shell">
     <header class="dashboard-header">
         <div class="dashboard-copy">
-            <p class="eyebrow">Welcome back, Keerthana 👋</p>
+            <p class="eyebrow">Welcome back, <%= username %> 👋</p>
             <h1>Manage your career documents.</h1>
         </div>
         <div class="header-actions">
             <button type="button" class="button primary" id="openResumeModal">Create Resume</button>
+            <a href="logout" class="button secondary">Logout</a>
         </div>
     </header>
 

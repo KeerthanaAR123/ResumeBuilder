@@ -1,5 +1,10 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+    String currentUser = (String) session.getAttribute("username");
+    if (currentUser == null || currentUser.isEmpty()) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
     String name = (String) request.getAttribute("name");
     String resumeTitle = (String) request.getAttribute("resumeTitle");
     String email = (String) request.getAttribute("email");
