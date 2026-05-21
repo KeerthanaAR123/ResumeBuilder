@@ -139,6 +139,8 @@
         </div>
     </section>
 
+    <% } %>
+
     <% if ((projectTitle1 != null && !projectTitle1.isEmpty()) || (projectDescription1 != null && !projectDescription1.isEmpty()) ||
            (projectTitle2 != null && !projectTitle2.isEmpty()) || (projectDescription2 != null && !projectDescription2.isEmpty())) { %>
     <section class="section projects-section">

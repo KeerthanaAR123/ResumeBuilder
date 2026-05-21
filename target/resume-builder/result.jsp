@@ -1,5 +1,10 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+    String currentUser = (String) session.getAttribute("username");
+    if (currentUser == null || currentUser.isEmpty()) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
     String name = (String) request.getAttribute("name");
     String resumeTitle = (String) request.getAttribute("resumeTitle");
     String email = (String) request.getAttribute("email");
@@ -133,6 +138,8 @@
             <% } %>
         </div>
     </section>
+
+    <% } %>
 
     <% if ((projectTitle1 != null && !projectTitle1.isEmpty()) || (projectDescription1 != null && !projectDescription1.isEmpty()) ||
            (projectTitle2 != null && !projectTitle2.isEmpty()) || (projectDescription2 != null && !projectDescription2.isEmpty())) { %>
