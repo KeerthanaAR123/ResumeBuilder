@@ -38,7 +38,7 @@ Hello,
 Your Resume Builder application has been deployed successfully.
 
 Application URL:
-http://localhost:8080/resume-builder
+http://localhost:8080
 
 Regards,
 Jenkins CI/CD Pipeline
