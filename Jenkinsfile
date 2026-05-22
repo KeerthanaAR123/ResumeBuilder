@@ -25,22 +25,40 @@ pipeline {
 
     post {
 
-        success {
+    success {
 
-            emailext (
-                subject: "SUCCESS: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                body: "Build successful!",
-                to: "kk9741463496@gmail.com"
-            )
-        }
+        emailext(
+            to: 'kk9741463496@gmail.com',
 
-        failure {
+            subject: 'Resume Builder Application Running Successfully',
 
-            emailext (
-                subject: "FAILED: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                body: "Build failed!",
-                to: "kk9741463496@gmail.com"
-            )
-        }
+            body: '''
+Hello,
+
+Your Resume Builder application has been deployed successfully.
+
+Application URL:
+http://localhost:8085/resume-builder
+
+Regards,
+Jenkins CI/CD Pipeline
+'''
+        )
     }
+
+    failure {
+
+        emailext(
+            to: 'kk9741463496@gmail.com',
+
+            subject: 'Build Failed',
+
+            body: '''
+Build failed.
+
+Please check Jenkins console output.
+'''
+        )
+    }
+}
 }
