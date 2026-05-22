@@ -1,53 +1,45 @@
 pipeline {
+
     agent any
-    environment {
-        EMAIL_RECIPIENT = 'user@example.com'
-        PROJECT_NAME = 'Resume Builder'
-    }
+
     stages {
-        stage('Checkout') {
+
+        stage('Build Maven') {
             steps {
-                checkout scm
+                bat 'mvn clean package'
             }
         }
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B clean package'
-                    } else {
-                        bat 'mvn -B clean package'
-                    }
-                }
+                bat 'docker build -t resume-build .'
             }
         }
-        stage('Archive') {
+
+        stage('Run Docker Container') {
             steps {
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-            }
-        }
-        stage('Docker Build') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker build -t resume-builder:latest .'
-                    } else {
-                        bat 'docker build -t resume-builder:latest .'
-                    }
-                }
+                bat 'docker rm -f resume-build-container || exit 0'
+                bat 'docker run -d --name resume-build-container -p 8085:8080 resume-build'
             }
         }
     }
+
     post {
+
         success {
-            mail to: env.EMAIL_RECIPIENT,
-                 subject: "${env.PROJECT_NAME} Build #${env.BUILD_NUMBER} Success",
-                 body: "Build ${env.BUILD_NUMBER} completed successfully.\n\nJob: ${env.JOB_NAME}\nURL: ${env.BUILD_URL}"
+            emailext(
+                to: 'kk9741463496@gmail.com',
+                subject: 'Resume Builder Build Successful',
+                body: 'Resume Builder deployed successfully.'
+            )
         }
+
         failure {
-            mail to: env.EMAIL_RECIPIENT,
-                 subject: "${env.PROJECT_NAME} Build #${env.BUILD_NUMBER} Failed",
-                 body: "Build ${env.BUILD_NUMBER} failed. Please review the Jenkins log at ${env.BUILD_URL}."
+            emailext(
+                to: 'kk9741463496@gmail.com',
+                subject: 'Resume Builder Build Failed',
+                body: 'Pipeline failed.'
+            )
         }
     }
 }
