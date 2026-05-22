@@ -2,87 +2,71 @@ pipeline {
 
     agent any
 
-    environment {
-        IMAGE_NAME = "resume-build"
-        CONTAINER_NAME = "resume-build-container"
+    tools {
+        maven 'Maven'
+        jdk 'JDK21'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                deleteDir()
-            }
-        }
-
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
                 git branch: 'master',
-                url: 'https://github.com/KeerthanaAR123/ResumeBuilder.git'
+                    url: 'https://github.com/KeerthanaAR123/Maven-Demo.git'
             }
         }
 
-        stage('Build Maven Project') {
+        stage('Build') {
             steps {
-                bat 'mvn clean package'
+                bat 'mvn clean compile'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Test') {
             steps {
-                bat 'docker build -t %IMAGE_NAME% .'
+                bat 'mvn test'
             }
         }
 
-        stage('Remove Old Container') {
+        stage('Package') {
             steps {
-                bat 'docker rm -f %CONTAINER_NAME% || exit 0'
+                bat 'mvn package'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Application') {
             steps {
-                bat 'docker run -d --name %CONTAINER_NAME% -p 8080:8080 %IMAGE_NAME%'
+                bat 'mvn exec:java -Dexec.mainClass="com.example.app.App"'
             }
         }
     }
 
     post {
 
+        always {
+            cleanWs()
+        }
+
         success {
 
-            emailext(
-                to: 'kk9741463496@gmail.com',
-                subject: 'Resume Builder Build Successful',
-                body: '''
-Hello,
-
-Your Resume Builder project was built and deployed successfully using Jenkins.
-
-Application URL:
-http://localhost:8080/resume-builder
-
-Regards,
-Jenkins CI/CD Pipeline
-'''
+            emailext (
+                subject: "SUCCESS: ${JOB_NAME} - Build #${BUILD_NUMBER}",
+                body: "Build was successful! View details here: ${BUILD_URL}",
+                to: "kk9741463496@gmail.com"
             )
         }
 
         failure {
 
-            emailext(
-                to: 'kk9741463496@gmail.com',
-                subject: 'Resume Builder Build Failed',
-                body: '''
-Hello,
-
-The Jenkins pipeline failed while building or deploying the Resume Builder project.
-
-Please check Jenkins Console Output for details.
-
-Regards,
-Jenkins CI/CD Pipeline
-'''
+            emailext (
+                subject: "FAILED: ${JOB_NAME} - Build #${BUILD_NUMBER}",
+                body: "Build failed. Please check the console output: ${BUILD_URL}",
+                to: "kk9741463496@gmail.com"
             )
         }
     }
