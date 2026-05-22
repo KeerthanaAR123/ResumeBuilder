@@ -42,7 +42,7 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d --name %CONTAINER_NAME% -p 8085:8080 %IMAGE_NAME%'
+                bat 'docker run -d --name %CONTAINER_NAME% -p 8080:8080 %IMAGE_NAME%'
             }
         }
     }
@@ -60,7 +60,7 @@ Hello,
 Your Resume Builder project was built and deployed successfully using Jenkins.
 
 Application URL:
-http://localhost:8085/resume-builder
+http://localhost:8080/resume-builder
 
 Regards,
 Jenkins CI/CD Pipeline
