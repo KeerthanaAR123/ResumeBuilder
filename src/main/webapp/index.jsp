@@ -14,34 +14,40 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="page-shell">
-    <header class="dashboard-header">
-        <div class="dashboard-copy">
+<div class="page-shell hero-page">
+    <header class="hero-header">
+        <div class="hero-text">
             <p class="eyebrow">Welcome back, <%= username %> 👋</p>
-            <h1>Manage your career documents.</h1>
-        </div>
-        <div class="header-actions">
-            <button type="button" class="button primary" id="openResumeModal">Create Resume</button>
-            <a href="logout" class="button secondary">Logout</a>
+            <h1>Build a resume that gets noticed.</h1>
+            <p class="hero-copy">Create a polished resume in minutes with a guided builder and downloadable PDF output.</p>
+            <div class="hero-buttons">
+                <button type="button" class="button primary" id="openResumeModal">Create Resume</button>
+                <a class="button secondary" href="logout">Logout</a>
+            </div>
+            <div class="hero-cta-panel">
+                <div class="hero-card">
+                    <div class="hero-card-icon">✔</div>
+                    <h2>One clean resume, zero clutter.</h2>
+                    <p>Create a modern, recruiter-ready resume with guided sections and a polished PDF export.</p>
+                    <button type="button" class="button primary button-cta" id="heroCreateBtn">Start Building</button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="dashboard-cards">
-        <article class="dashboard-card active">
-            <div class="card-icon">+</div>
-            <h3>Create Resume</h3>
-            <p>Build a new resume from scratch with AI.</p>
-        </article>
-        <article class="dashboard-card">
-            <div class="card-icon">⤴</div>
-            <h3>Import PDF</h3>
-            <p>Upload an existing resume to edit.</p>
-        </article>
-        <article class="dashboard-card">
-            <div class="card-icon">📄</div>
-            <h3>My Resumes</h3>
-            <p>View all your resume documents.</p>
-        </article>
+    <section class="hero-features">
+        <div class="feature-box">
+            <h3>One click startup</h3>
+            <p>Begin resume creation immediately with a clear workflow.</p>
+        </div>
+        <div class="feature-box">
+            <h3>Professional layout</h3>
+            <p>Create a clean, modern resume that recruiters can scan easily.</p>
+        </div>
+        <div class="feature-box">
+            <h3>PDF download</h3>
+            <p>Export your final resume as a ready-to-share PDF document.</p>
+        </div>
     </section>
 
     <section class="wizard-panel hidden" id="resumeWizard">
@@ -194,6 +200,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('resumeModal');
         const openModal = document.getElementById('openResumeModal');
+        const heroCreateButton = document.getElementById('heroCreateBtn');
         const closeModal = document.getElementById('closeResumeModal');
         const cancelModal = document.getElementById('cancelResumeModal');
         const startWizardButton = document.getElementById('startWizard');
@@ -231,6 +238,9 @@
         }
 
         openModal.addEventListener('click', () => modal.classList.remove('hidden'));
+        if (heroCreateButton) {
+            heroCreateButton.addEventListener('click', () => modal.classList.remove('hidden'));
+        }
         closeModal.addEventListener('click', () => modal.classList.add('hidden'));
         cancelModal.addEventListener('click', () => modal.classList.add('hidden'));
 
@@ -245,6 +255,15 @@
             modal.classList.add('hidden');
             showStep(currentStep);
         });
+
+        // If page opened with ?create=true open the modal automatically
+        try {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('create') === 'true') {
+                modal.classList.remove('hidden');
+                resumeTitleModal.focus();
+            }
+        } catch (e) {}
 
         nextStepButton.addEventListener('click', () => {
             if (currentStep < steps.length) {

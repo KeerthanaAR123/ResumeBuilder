@@ -18,6 +18,11 @@ public class ResumeServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String currentUser = (String) request.getSession().getAttribute("username");
+        if (currentUser == null || currentUser.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
 
         request.setAttribute("name", safe(request.getParameter("name")));
         request.setAttribute("resumeTitle", safe(request.getParameter("resumeTitle")));
@@ -44,6 +49,20 @@ public class ResumeServlet extends HttpServlet {
         request.setAttribute("certificationIssuer1", safe(request.getParameter("certificationIssuer1")));
         request.setAttribute("certificationName2", safe(request.getParameter("certificationName2")));
         request.setAttribute("certificationIssuer2", safe(request.getParameter("certificationIssuer2")));
+
+        // Save resume to in-memory store for the current user
+        java.util.Map<String, String> resumeData = new java.util.HashMap<>();
+        java.util.Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            String value = request.getParameter(name);
+            if (value != null) resumeData.put(name, value);
+        }
+        // attach basic meta
+        resumeData.put("_owner", currentUser);
+        resumeData.put("_createdAt", java.time.Instant.now().toString());
+
+        ResumeStore.getInstance().addResume(currentUser, resumeData);
 
         request.getRequestDispatcher("/result.jsp").forward(request, response);
     }

@@ -188,7 +188,7 @@
     <% } %>
 
     <div class="resume-actions no-print">
-        <button type="button" class="button secondary" onclick="window.history.back()">Edit Resume</button>
+        <a class="button secondary" href="index.jsp?create=true">Edit Resume</a>
         <button type="button" class="button primary" id="downloadResumeBtn">Download Resume</button>
     </div>
 </div>
@@ -205,6 +205,17 @@
         };
         html2pdf().set(options).from(element).save();
     });
+    // If opened with ?autoDownload=true, trigger the PDF download automatically
+    try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('autoDownload') === 'true') {
+            // give time for rendering
+            setTimeout(() => {
+                const btn = document.getElementById('downloadResumeBtn');
+                if (btn) btn.click();
+            }, 400);
+        }
+    } catch (e) {}
 </script>
 </body>
 </html>
