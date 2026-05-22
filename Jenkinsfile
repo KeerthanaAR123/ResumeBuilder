@@ -17,7 +17,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                 url: 'https://github.com/KeerthanaAR123/ResumeBuilder.git'
             }
         }
